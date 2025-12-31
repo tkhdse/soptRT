@@ -1,7 +1,12 @@
 # soptRT
 sopt = "small optimizer"; a Python AI Optimizer and Code Generator.
 
-Honestly, not fully sure what I want to do with this yet.
+Honestly, not fully sure what I want to do with this yet. I'm taking this opportunity to learn Rust though.
+Get started with: 
+```
+cd backend
+cargo run
+```
 
 Goals are:
 * TensorRT from scratch
