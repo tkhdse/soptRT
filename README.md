@@ -8,13 +8,14 @@ cd backend
 cargo run
 ```
 
-Goals are:
-* TensorRT from scratch
-* nvFuser from scratch
+soptRT aims to:
+* Perform high-level deep learning optimizations
+* Build automated code-generator with SOTA
+This will mirror NVIDIA's TensorRT/nvFuser but for my local hardware (since NVIDIA GPU's are too expensive now). 
 
 And I want to find ways to integrate LLM opt as well. Will probably extend with TVM/MLIR/LLVM.
 
-Backend will be written in Rust.
+Backend will be written in Rust; I'm using this project as an opportunity to learn Rust. 
 
 ### tracer
 This module captures the DFG from the Python code.
