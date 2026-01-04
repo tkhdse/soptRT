@@ -28,6 +28,8 @@ pip install -r requirements.txt
 
 ## Getting started
 ```python
+import torch
+import torch.nn as nn
 import sopt
 
 @sopt.compile
