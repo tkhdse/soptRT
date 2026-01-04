@@ -16,8 +16,19 @@ This will mirror NVIDIA's TensorRT/nvFuser but for my local hardware (since NVID
 
 And I want to find ways to integrate LLM-specific optimzation as well. Will probably extend with TVM/MLIR/LLVM.
 
+## Setup
+```
+# melior/MLIR
+brew install llvm@21
+
+# optional: make a venv: 
+# python3 -m venv venv && . bin/venv/activate
+pip install -r requirements.txt
+```
+
+
 ### tracer
-This module captures the DFG from the Python/PyTorch code using symbolic tracing (`PyTorch FX`). The idea is to set up Rust bindings for PyTorch (`melior`) and trigger the compiler/optimizer via a `compile()` call.
+This module captures the DFG from the Python/PyTorch code using symbolic tracing with PyTorch FX (`torch.fx`). The idea is to set up Rust bindings for PyTorch (`melior`) and trigger the compiler/optimizer via a `compile()` call.
 
 ### opt
 tbd
