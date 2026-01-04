@@ -26,6 +26,15 @@ brew install llvm@21
 pip install -r requirements.txt
 ```
 
+## Getting started
+```
+import sopt
+
+@sopt.compile
+def Model(nn.Module): 
+#   model definition
+```
+
 
 ### tracer
 This module captures the DFG from the Python/PyTorch code using symbolic tracing with PyTorch FX (`torch.fx`). The idea is to set up Rust bindings for PyTorch (`melior`) and trigger the compiler/optimizer via a `compile()` call.
