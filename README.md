@@ -17,7 +17,7 @@ This will mirror NVIDIA's TensorRT/nvFuser but for my local hardware (since NVID
 And I want to find ways to integrate LLM-specific optimzation as well. Will probably extend with TVM/MLIR/LLVM.
 
 ### tracer
-This module captures the DFG from the Python/PyTorch code. The idea is to set up Rust bindings for PyTorch and trigger the compiler/optimizer via a compile() call.
+This module captures the DFG from the Python/PyTorch code using symbolic tracing (`PyTorch FX`). The idea is to set up Rust bindings for PyTorch (`melior`) and trigger the compiler/optimizer via a `compile()` call.
 
 ### opt
 tbd
