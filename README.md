@@ -27,7 +27,7 @@ pip install -r requirements.txt
 ```
 
 ## Getting started
-```
+```python
 import sopt
 
 @sopt.compile
