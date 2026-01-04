@@ -1,10 +1,6 @@
 # soptRT
-sopt = "small optimizer"; a PyTorch AI Optimizer and Code Generator. This is my own stab at [graph compilers](https://github.com/Lightning-AI/lightning-thunder) for LLMs. I'm taking this opportunity to learn Rust/Mojo.
-Get started with: 
-```
-cd backend
-cargo run
-```
+sopt = "small optimizer"; a PyTorch AI Optimizer and Code Generator. This is my own stab at [graph compilers](https://github.com/Lightning-AI/lightning-thunder) for LLMs. I'm taking this opportunity to learn Rust.
+
 
 High-level goals of soptRT:
 * Perform high-level deep learning optimizations
@@ -24,6 +20,10 @@ brew install llvm@21
 # optional: make a venv: 
 # python3 -m venv venv && . bin/venv/activate
 pip install -r requirements.txt
+
+# build Rust binaries
+cd backend
+cargo build
 ```
 
 ## Getting started
