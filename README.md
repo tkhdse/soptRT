@@ -1,5 +1,5 @@
 # soptRT
-sopt = "small optimizer"; a Python AI Optimizer and Code Generator. This is my own stab at [graph compilers](https://github.com/Lightning-AI/lightning-thunder) for LLMs. I'm taking this opportunity to learn Rust/Mojo.
+sopt = "small optimizer"; a PyTorch AI Optimizer and Code Generator. This is my own stab at [graph compilers](https://github.com/Lightning-AI/lightning-thunder) for LLMs. I'm taking this opportunity to learn Rust/Mojo.
 Get started with: 
 ```
 cd backend
@@ -39,7 +39,7 @@ def Model(nn.Module):
 
 
 ### tracer
-This module captures the DFG from the Python/PyTorch code using symbolic tracing with PyTorch FX (`torch.fx`). The idea is to set up Rust bindings for PyTorch (`melior`) and trigger the compiler/optimizer via a `compile()` call.
+This module captures the DFG from the Python/PyTorch code using symbolic tracing with PyTorch FX (`torch.fx`). The idea is to set up Rust bindings for PyTorch (`melior`) and trigger the compiler/optimizer via the `@sopt.compile` decorator. `torch.fx` IR needs to be lowered to MLIR text for system compatibility.
 
 ### opt
 tbd
