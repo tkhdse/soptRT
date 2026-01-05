@@ -1,0 +1,13 @@
+[package]
+name = "soptRT"
+version = "0.1.0"
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "soptRT"
+crate-type = ["cdylib"]
+
+[dependencies]
+melior = "0.26.1"
+pyo3 = "0.27.0"
