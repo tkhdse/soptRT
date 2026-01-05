@@ -1,5 +1,5 @@
 # soptRT
-sopt = "small optimizer"; a PyTorch AI Optimizer and Code Generator. This is my own stab at [graph compilers](https://github.com/Lightning-AI/lightning-thunder) for LLMs. I'm taking this opportunity to learn Rust.
+sopt = "small optimizer"; a PyTorch AI Optimizer and Code Generator. This is my own stab at [graph compilers](https://github.com/Lightning-AI/lightning-thunder) for LLMs. I'm taking this opportunity to learn Rust (`melior`/`PyO3`).
 
 
 High-level goals of soptRT:
@@ -9,21 +9,19 @@ High-level goals of soptRT:
 * Support for extensibility (CUDA/Triton/... kernels)
 This will mirror NVIDIA's TensorRT/nvFuser but for my local hardware (since NVIDIA GPU's are too expensive now). 
 
-
 And I want to find ways to integrate LLM-specific optimzation as well. Will probably extend with TVM/MLIR/LLVM.
 
 ## Setup
 ```
-# melior/MLIR
+# needed for melior
 brew install llvm@21
 
 # optional: make a venv: 
 # python3 -m venv venv && . bin/venv/activate
 pip install -r requirements.txt
 
-# build Rust binaries
-cd backend
-cargo build
+# build Rust and Python import setup
+maturin develop
 ```
 
 ## Getting started
@@ -39,7 +37,7 @@ def Model(nn.Module):
 
 
 ### tracer
-This module captures the DFG from the Python/PyTorch code using symbolic tracing with PyTorch FX (`torch.fx`). The idea is to set up Rust bindings for PyTorch (`melior`) and trigger the compiler/optimizer via the `@sopt.compile` decorator. `torch.fx` IR needs to be lowered to MLIR text for system compatibility.
+This module captures the DFG from the Python/PyTorch code using symbolic tracing with PyTorch FX (`torch.fx`). The idea is to set up Rust bindings for PyTorch (`PyO3`) and trigger the compiler/optimizer via the `@sopt.compile` decorator. `torch.fx` IR needs to be lowered to MLIR text for system compatibility.
 
 ### opt
 tbd
