@@ -1,9 +1,12 @@
+mod parser;
+
 use pyo3::prelude::*;
 
 /// A Python module implemented in Rust.
 #[pymodule]
 mod soptRT {
     use pyo3::prelude::*;
+    use crate::parser;
 
     /// Formats the sum of two numbers as string.
     #[pyfunction]
@@ -13,7 +16,8 @@ mod soptRT {
 
 
     #[pyfunction]
-    fn parse_graph(graph: String) -> PyResult<String> {
-        Ok(graph)
+    fn _parse_graph(graph: String) -> PyResult<String> {
+        let result = parser::lower_fx_to_mlir(graph);
+        Ok(result.unwrap_or("None".to_string()))
     }
 }
