@@ -22,6 +22,6 @@ def compile(model: nn.Module):
 
     nodes_data = serialize_fx_to_json(module.run_decompositions().graph)
     rgraph = sopt_rt.compile(nodes_data)
-    print(rgraph)
+    # print(rgraph)
 
 

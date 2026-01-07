@@ -4,6 +4,7 @@ use pyo3::prelude::*;
 /// A Python module implemented in Rust.
 #[pymodule]
 mod sopt_rt {
+    use pyo3::exceptions::PyValueError;
     use pyo3::prelude::*;
 
     #[derive(Debug, FromPyObject)]
@@ -15,14 +16,16 @@ mod sopt_rt {
     }
 
     #[pyfunction]
-    fn compile(nodes: Vec<Node>) -> PyResult<String> {
-        let result = lower_fx_to_mlir(nodes);
-        Ok(result.unwrap_or("None".to_string()))
+    fn compile(nodes: Vec<Node>) -> PyResult<i32> {
+        let result = lower_fx_to_mlir(nodes)
+            .map_err(|e| PyValueError::new_err(e))?;
+
+        // call compile_graph()
+        Ok(result)
     }
 
     // we can add more entrypoints here
     // e.g if we just want to run an optimization pass
-
     // ... 
 
     // map ATen Ops to MLIR Dialects:
@@ -31,10 +34,11 @@ mod sopt_rt {
                 aten.mm         -> linalg.matmul
                 aten.relu       -> arith.maxf
     */  
-    fn lower_fx_to_mlir(nodes: Vec<Node>) -> Option<String> {
+    fn lower_fx_to_mlir(nodes: Vec<Node>) -> Result<i32, String> {
         for node in nodes {
             println!("Node: {}, Op: {}, Target: {}", node.name, node.op_name, node.target);
         }
-        return Some(String::from("Ok"))
+
+        return Ok(0)
     }
 }
