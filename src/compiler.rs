@@ -5,14 +5,31 @@ use melior::{
     utility::register_all_dialects
 };
 
+use pyo3::prelude::*;
+
+#[derive(Debug, FromPyObject)]
+pub struct FXGraph {
+    pub nodes: Vec<FXNode>
+}
+
+#[derive(Debug, FromPyObject)]
+pub struct FXNode {
+    pub name: String,
+    pub op_name: String,
+    pub target: String,
+    args: Vec<String>
+}
+
 // Main pipeline
-pub fn compile_graph(graph: FxGraph) -> Result<String> {
+pub fn compile_graph(graph: FXGraph) -> Result<i32, String> {
     let context = init_mlir_context();
     // build module
     // run conversion pass (to IR)
     // run optimization passes
     // run converstion pass (to LLVM)
     // code generation
+
+    Ok(0)
 }
 
 
