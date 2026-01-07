@@ -1,7 +1,7 @@
 use melior::{
     Context, 
     dialect::{DialectRegistry, arith, func}, 
-    // ir::{*, attribute::TypeAttribute}, 
+    ir::{*, attribute::TypeAttribute}, 
     utility::register_all_dialects
 };
 
@@ -23,6 +23,7 @@ pub struct FXNode {
 // Main pipeline
 pub fn compile_graph(graph: FXGraph) -> Result<i32, String> {
     let context = init_mlir_context();
+    let module = init_module(&context);
     // build module
     // run conversion pass (to IR)
     // run optimization passes
@@ -42,4 +43,10 @@ pub fn init_mlir_context() -> Context {
     context.append_dialect_registry(&registry);
     context.load_all_available_dialects();
     context
+}
+
+pub fn init_module(context: &Context) -> Module {
+    let location = Location::unknown(context);
+    let module = Module::new(location);
+    module
 }
