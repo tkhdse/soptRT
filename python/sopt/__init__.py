@@ -21,7 +21,7 @@ def compile(model: nn.Module):
     module = torch.export.export(model(), (torch.randn(100, 8), ))
 
     nodes_data = serialize_fx_to_json(module.run_decompositions().graph)
-    rgraph = sopt_rt._parse_graph(nodes_data)
+    rgraph = sopt_rt.compile(nodes_data)
     print(rgraph)
 
 
