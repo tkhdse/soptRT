@@ -5,8 +5,19 @@ use melior::{
     utility::register_all_dialects
 };
 
+// Main pipeline
+pub fn compile_graph(graph: FxGraph) -> Result<String> {
+    let context = init_mlir_context();
+    // build module
+    // run conversion pass (to IR)
+    // run optimization passes
+    // run converstion pass (to LLVM)
+    // code generation
+}
+
+
 // Context setup
-pub fn init_sopt() -> Context {
+pub fn init_mlir_context() -> Context {
     let registry = DialectRegistry::new();
     register_all_dialects(&registry);
 

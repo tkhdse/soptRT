@@ -20,6 +20,10 @@ mod sopt_rt {
         Ok(result.unwrap_or("None".to_string()))
     }
 
+    // we can add more entrypoints here
+    // e.g if we just want to run an optimization pass
+
+    // ... 
 
     // map ATen Ops to MLIR Dialects:
     /* 
