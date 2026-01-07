@@ -31,7 +31,7 @@ import torch.nn as nn
 import sopt
 
 @sopt.compile
-def Model(nn.Module): 
+class Model(nn.Module): 
 #   model definition
 ```
 
