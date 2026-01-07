@@ -1,5 +1,5 @@
 # soptRT
-sopt = "small optimizer"; a PyTorch AI Optimizer and Code Generator. This is my own stab at [graph compilers](https://github.com/Lightning-AI/lightning-thunder) for LLMs. I'm taking this opportunity to learn Rust (`melior`/`PyO3`).
+sopt = "small optimizer"; a PyTorch AI Optimizer and Code Generator. This is my own stab at [graph compilers](https://github.com/Lightning-AI/lightning-thunder) for LLMs. I'm taking this opportunity to learn Rust (`melior`/`PyO3`). Keeping track of [this dev blog](https://www.tkhadse.com/compiler) to discuss development and design choices.
 
 
 High-level goals of soptRT:
