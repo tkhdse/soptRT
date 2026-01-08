@@ -1,5 +1,3 @@
-mod dialects;
-
 use crate::dialects::soptfx::build_soptfx_op;
 
 use melior::{
@@ -9,18 +7,20 @@ use melior::{
     utility::register_all_dialects
 };
 
+use crate::sopt_rt::PyNode;
 use pyo3::prelude::*;
 
-#[derive(Debug, FromPyObject)]
-pub struct FXGraph {
-    pub nodes: Vec<FXNode>
-}
 
 pub struct FXNode {
     pub name: String,
-    pub op_name: String,
+    pub op_name: OpType,
     pub target: String,
     args: Vec<String>
+}
+
+// #[derive(Debug, FromPyObject)]
+pub struct FXGraph {
+    pub nodes: Vec<FXNode>
 }
 
 // FX Operation Types
@@ -56,13 +56,15 @@ pub fn lower_fx_to_mlir(py_nodes: Vec<PyNode>) -> Result<FXGraph, String> {
     // }
 
     let nodes = py_nodes.into_iter()
-        .map(|pynode| FXNode {
-            name: pynode.name,
-            op_name: parse_op_type(pynode.op_name),
-            target: pynode.target,
-            args: pynode.args
+        .map(|pynode| -> Result<FXNode, String> {
+            Ok(FXNode {
+                name: pynode.name,
+                op_name: parse_op_type(&pynode.op_name)?,
+                target: pynode.target,
+                args: pynode.args
+            })
         })
-        .collect::<Result<Vec<_>, _>>()?;
+        .collect::<Result<Vec<FXNode>, String>>()?;
 
     return Ok(FXGraph{ nodes })
 }
@@ -101,7 +103,7 @@ fn init_module(context: &Context) -> Module {
 
 fn convert_to_soptfx(graph: &FXGraph) -> Result<i32, String> {
     
-    for node in graph::nodes {
+    for node in &graph.nodes {
         // match node::op_name {
         //     OpType::Placeholder => ,
         //     OpType::CallFunction => ,
@@ -110,7 +112,7 @@ fn convert_to_soptfx(graph: &FXGraph) -> Result<i32, String> {
         // }
 
         let op_res = build_soptfx_op(&node)
-            .map(|e| Error("Could not convert Operation."))?;
+            .map_err(|e| format!("Could not convert operation '{}': {}", node.name, e))?;
     }
 
     Ok(0)

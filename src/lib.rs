@@ -1,6 +1,7 @@
 use pyo3::prelude::*;
 
 mod compiler;
+mod dialects;
 
 /// A Python module implemented in Rust.
 #[pymodule]
@@ -15,7 +16,7 @@ mod sopt_rt {
         pub name: String,
         pub op_name: String,
         pub target: String,
-        args: Vec<String>
+        pub args: Vec<String>
     }
 
 
