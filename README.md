@@ -9,7 +9,13 @@ High-level goals of soptRT:
 * Support for extensibility (CUDA/Triton/... kernels)
 This will mirror NVIDIA's TensorRT/nvFuser but for my local hardware (since NVIDIA GPU's are too expensive now). 
 
-And I want to find ways to integrate LLM-specific optimzation as well. Will probably extend with TVM/MLIR/LLVM.
+To perform lowering, I utilize the following abstractions (from highest-levl to lowest-level):
+* soptfx
+* soptfuse
+* linalg
+* target
+
+Additionally, I want to find ways to integrate LLM-specific optimzation as well. Will probably extend with TVM/MLIR/LLVM.
 
 ## Setup
 ```
