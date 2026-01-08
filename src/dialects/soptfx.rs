@@ -14,6 +14,8 @@ pub fn build_soptfx_op(node: &FXNode, value_map: &HashMap<&str, Operation>) -> R
     // current name example:    aten.permute.default    ->      soptfx.aten_permute
     //                          aten.relu.default       ->      soptfx.aten_relu
 
+    // value_map  ->  [node.name, resultingOperation] (node.name gives us a unique identifier that we can reference given args)
+
     // match node::op_name {
     //     OpType::Output => ,
     //     OpType::GetAttr => ,
