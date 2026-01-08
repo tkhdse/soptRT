@@ -9,6 +9,8 @@ class Node:
     args: list
 
 def serialize_fx_to_json(graph: torch.fx.GraphModule):
+    print(graph)
+    
     nodes_data = []
 
     for node in graph.nodes:
