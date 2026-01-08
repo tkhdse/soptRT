@@ -22,9 +22,13 @@ pub struct FXNode {
 
 // Main pipeline
 pub fn compile_graph(graph: FXGraph) -> Result<i32, String> {
+    // init context
     let context = init_mlir_context();
-    let module = init_module(&context);
+
     // build module
+    let module = init_module(&context);
+
+
     // run conversion pass (to IR)
     // run optimization passes
     // run converstion pass (to LLVM)
@@ -42,6 +46,10 @@ pub fn init_mlir_context() -> Context {
     let context = Context::new();
     context.append_dialect_registry(&registry);
     context.load_all_available_dialects();
+    
+    // temporary 
+    context.set_allow_unregistered_dialects(true);
+
     context
 }
 
