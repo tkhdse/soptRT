@@ -1,9 +1,10 @@
 use crate::dialects::soptfx::build_soptfx_op;
+use std::collections::HashMap;
 
 use melior::{
     Context, 
     dialect::{DialectRegistry, arith, func}, 
-    ir::{*, attribute::TypeAttribute}, 
+    ir::{*, attribute::TypeAttribute, Operation}, 
     utility::register_all_dialects
 };
 
@@ -40,7 +41,8 @@ pub fn compile_graph(graph: FXGraph) -> Result<i32, String> {
     let module = init_module(&context);
 
     // run conversion pass (to IR)
-    // convert_to_soptfx();
+    let mut value_map = HashMap::new();
+    convert_to_soptfx(&graph, &value_map);
 
     // run optimization passes
     // run converstion pass (to LLVM)
@@ -51,9 +53,9 @@ pub fn compile_graph(graph: FXGraph) -> Result<i32, String> {
 
 pub fn lower_fx_to_mlir(py_nodes: Vec<PyNode>) -> Result<FXGraph, String> {
         
-    // for node in &nodes {
-    //     println!("Node: {}, Op: {}, Target: {}", node.name, node.op_name, node.target);
-    // }
+    for node in &py_nodes {
+        println!("Node: {}, Op: {}, Target: {}", node.name, node.op_name, node.target);
+    }
 
     let nodes = py_nodes.into_iter()
         .map(|pynode| -> Result<FXNode, String> {
@@ -88,10 +90,7 @@ fn init_mlir_context() -> Context {
     let context = Context::new();
     context.append_dialect_registry(&registry);
     context.load_all_available_dialects();
-    
-    // temporary 
-    context.set_allow_unregistered_dialects(true);
-
+    context.set_allow_unregistered_dialects(true);     // temporary 
     context
 }
 
@@ -101,17 +100,11 @@ fn init_module(context: &Context) -> Module {
     module
 }
 
-fn convert_to_soptfx(graph: &FXGraph) -> Result<i32, String> {
+fn convert_to_soptfx(graph: &FXGraph, value_map: &HashMap<&str, Operation>) -> Result<i32, String> {
     
     for node in &graph.nodes {
-        // match node::op_name {
-        //     OpType::Placeholder => ,
-        //     OpType::CallFunction => ,
-        //     OpType::Output => ,
-        //     _ => 
-        // }
 
-        let op_res = build_soptfx_op(&node)
+        let op_res = build_soptfx_op(&node, &value_map)
             .map_err(|e| format!("Could not convert operation '{}': {}", node.name, e))?;
     }
 
