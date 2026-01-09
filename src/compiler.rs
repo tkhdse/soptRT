@@ -9,17 +9,16 @@ use melior::{
 };
 
 use crate::sopt_rt::PyNode;
-use pyo3::prelude::*;
 
 
 pub struct FXNode {
     pub name: String,
+    pub index: usize,
     pub op_name: OpType,
     pub target: String,
-    args: Vec<String>
+    pub args: Vec<String>
 }
 
-// #[derive(Debug, FromPyObject)]
 pub struct FXGraph {
     pub nodes: Vec<FXNode>
 }
@@ -42,7 +41,8 @@ pub fn compile_graph(graph: FXGraph) -> Result<i32, String> {
 
     // run conversion pass (to IR)
     let mut value_map = HashMap::new();
-    convert_to_soptfx(&graph, &value_map);
+    let conv_result = convert_to_soptfx(&graph, &value_map)
+        .map_err(|e| e);
 
     // run optimization passes
     // run converstion pass (to LLVM)
@@ -58,9 +58,11 @@ pub fn lower_fx_to_mlir(py_nodes: Vec<PyNode>) -> Result<FXGraph, String> {
     }
 
     let nodes = py_nodes.into_iter()
-        .map(|pynode| -> Result<FXNode, String> {
+        .enumerate()
+        .map(|(i, pynode)| -> Result<FXNode, String> {
             Ok(FXNode {
                 name: pynode.name,
+                index: i,
                 op_name: parse_op_type(&pynode.op_name)?,
                 target: pynode.target,
                 args: pynode.args
@@ -103,7 +105,6 @@ fn init_module(context: &Context) -> Module {
 fn convert_to_soptfx(graph: &FXGraph, value_map: &HashMap<&str, Operation>) -> Result<i32, String> {
     
     for node in &graph.nodes {
-
         let op_res = build_soptfx_op(&node, &value_map)
             .map_err(|e| format!("Could not convert operation '{}': {}", node.name, e))?;
     }
