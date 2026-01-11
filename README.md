@@ -9,7 +9,7 @@ High-level goals of soptRT:
 * Support for extensibility (CUDA/Triton/... kernels)
 This will mirror NVIDIA's TensorRT/nvFuser but for my local hardware (since NVIDIA GPU's are too expensive now). 
 
-To perform lowering, I utilize the following abstractions (from highest-levl to lowest-level):
+To perform lowering, I utilize the following abstractions (from highest-level to lowest-level):
 * soptfx
 * soptfuse
 * linalg
