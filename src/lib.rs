@@ -22,10 +22,12 @@ mod sopt_rt {
 
     #[pyfunction]
     fn compile(nodes: Vec<PyNode>) -> PyResult<i32> {
-        let graph = compiler::lower_fx_to_mlir(nodes)
+        let context = compiler::init_mlir_context();
+        let sopt_compiler = compiler::SOPTCompiler{ ctx: context };
+        let graph = sopt_compiler.lower_fx_to_mlir(nodes)
             .map_err(|e| PyValueError::new_err(e))?;
 
-        let result = compiler::compile_graph(graph)
+        let result = sopt_compiler.compile_graph(graph)
             .map_err(|e| PyValueError::new_err(e))?;
         Ok(result)
     }

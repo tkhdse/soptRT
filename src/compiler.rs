@@ -34,47 +34,57 @@ pub enum OpType {
     GetAttr
 }
 
-// Main pipeline
-pub fn compile_graph(graph: FXGraph) -> Result<i32, String> {
-    // init context
-    let context = init_mlir_context();
-
-    // build module
-    let module = init_module(&context);
-
-    // run conversion pass (to IR)
-    let mut value_map = HashMap::new();
-    let conv_result = convert_to_soptfx(&graph, &value_map)
-        .map_err(|e| e);
-
-    // run optimization passes
-    // run converstion pass (to LLVM)
-    // code generation
-
-    Ok(0)
+pub struct SOPTCompiler {
+    pub ctx: Context
 }
 
-pub fn lower_fx_to_mlir(py_nodes: Vec<PyNode>) -> Result<FXGraph, String> {
-        
-    for node in &py_nodes {
-        println!("Node: {}, Op: {}, Target: {}", node.name, node.op_name, node.target);
+impl SOPTCompiler {
+    // Main pipeline
+    pub fn compile_graph(&self, graph: FXGraph) -> Result<i32, String> {
+        // init context
+        let context = init_mlir_context();
+    
+        // build module
+        let module = init_module(&context);
+    
+        // run conversion pass (to IR)
+        let mut value_map = HashMap::new();
+        let conv_result = convert_to_soptfx(&graph, &value_map)
+            .map_err(|e| e);
+    
+        // run optimization passes
+        // run converstion pass (to LLVM)
+        // code generation
+    
+        Ok(0)
     }
-
-    let nodes = py_nodes.into_iter()
-        .enumerate()
-        .map(|(i, pynode)| -> Result<FXNode, String> {
-            Ok(FXNode {
-                name: pynode.name,
-                index: i,
-                op_name: parse_op_type(&pynode.op_name)?,
-                target: pynode.target,
-                args: pynode.args
+    
+    pub fn lower_fx_to_mlir(&self, py_nodes: Vec<PyNode>) -> Result<FXGraph, String> {
+            
+        // for node in &py_nodes {
+        //     println!("Node: {}, Op: {}, Target: {}", node.name, node.op_name, node.target);
+        // }
+    
+        let nodes = py_nodes.into_iter()
+            .enumerate()
+            .map(|(i, pynode)| -> Result<FXNode, String> {
+                Ok(FXNode {
+                    name: pynode.name,
+                    index: i,
+                    op_name: parse_op_type(&pynode.op_name)?,
+                    target: pynode.target,
+                    args: pynode.args
+                })
             })
-        })
-        .collect::<Result<Vec<FXNode>, String>>()?;
-
-    return Ok(FXGraph{ nodes })
+            .collect::<Result<Vec<FXNode>, String>>()?;
+    
+        return Ok(FXGraph{ nodes })
+    }
 }
+
+
+
+
 
 fn parse_op_type(op_name: &str) -> Result<OpType, String> {
     match op_name {
@@ -88,7 +98,7 @@ fn parse_op_type(op_name: &str) -> Result<OpType, String> {
 
 
 // Context setup
-fn init_mlir_context() -> Context {
+pub fn init_mlir_context() -> Context {
     let registry = DialectRegistry::new();
     register_all_dialects(&registry);
 

@@ -24,7 +24,7 @@ pub fn build_soptfx_op(node: &FXNode, value_map: &HashMap<&str, Operation>) -> R
             // println!("{:?}", node);
             let target = &node.target;
             let target_parts = target.split('.').collect::<Vec<&str>>();
-            let node_type = format!("{}.{}_{}", DIALECT, target_parts[0], target_parts[1]); // CAUSES ERROR
+            let node_type = format!("{}.{}_{}", DIALECT, target_parts[0], target_parts[1]);
             handle_callfunction_op(&value_map, &node_type, op_id)
         },
         OpType::Output => handle_output_op(&value_map),
