@@ -10,7 +10,7 @@ use melior::{
 
 use crate::sopt_rt::PyNode;
 
-
+#[derive(Debug)]
 pub struct FXNode {
     pub name: String,
     pub index: usize,
@@ -19,11 +19,14 @@ pub struct FXNode {
     pub args: Vec<String>
 }
 
+
+
 pub struct FXGraph {
     pub nodes: Vec<FXNode>
 }
 
 // FX Operation Types
+#[derive(Debug)]
 pub enum OpType {
     Placeholder,
     CallFunction,

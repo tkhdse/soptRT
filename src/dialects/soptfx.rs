@@ -21,10 +21,10 @@ pub fn build_soptfx_op(node: &FXNode, value_map: &HashMap<&str, Operation>) -> R
     match &node.op_name {
         OpType::Placeholder => handle_placeholder_op(&value_map, op_id, node.index),
         OpType::CallFunction => {
-            // let target = &node.target;
-            // let target_parts = target.split(',').collect::<Vec<&str>>();
-            // let node_type = format!("{}.{}_{}", DIALECT, target_parts[0], target_parts[1]); // CAUSES ERROR
-            let node_type = "aten.blah".to_string();
+            // println!("{:?}", node);
+            let target = &node.target;
+            let target_parts = target.split('.').collect::<Vec<&str>>();
+            let node_type = format!("{}.{}_{}", DIALECT, target_parts[0], target_parts[1]); // CAUSES ERROR
             handle_callfunction_op(&value_map, &node_type, op_id)
         },
         OpType::Output => handle_output_op(&value_map),
