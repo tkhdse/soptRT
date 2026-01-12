@@ -20,7 +20,6 @@ pub struct FXNode {
 }
 
 
-
 pub struct FXGraph {
     pub nodes: Vec<FXNode>
 }

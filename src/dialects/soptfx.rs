@@ -54,10 +54,22 @@ fn handle_placeholder_op(value_map: OpMap, op_id: &String, index: usize) -> Resu
 
 fn handle_callfunction_op(ctx: &Context, value_map: OpMap, node: &FXNode, node_type: String) -> Result<i32, String> {
     // get operands (from map)
-    // let arg1 = value_map.get();
+    let operand_values: Vec<Value> = node.args.iter()
+        .map(|arg: &String| {
+            value_map.get(arg.as_str())
+                .cloned()
+                .ok_or_else(|| format!("Node '{}' not found in value map", arg)) // returns Err
+        })
+        .collect::<Result<Vec<Value>, String>>()
+        .map_err(|e| e)?;
 
     // construct operation -> build_op()
-    // let result = build_op(ctx, node_type);
+    let location = Location::unknown(ctx);
+    let op = OperationBuilder::new(&node_type, location)
+        .add_operands(&operand_values)
+        // .add_results(&[tensor_type])
+        .build();
+
     // save return in map
     Ok(0)
 }
@@ -75,9 +87,9 @@ fn handle_output_op(ctx: &Context, value_map: OpMap, node: &FXNode) -> Result<i3
 
     // construct operation -> build_op()
     let location = Location::unknown(ctx);
-    let op = OperationBuilder::new("soptfx.return", location)
+    let opname = format!("{}.return", DIALECT);
+    let op = OperationBuilder::new(&opname, location)
         .add_operands(&operand_values)
-        // .add_results(&[tensor_type])
         .build();
 
     // append to block
