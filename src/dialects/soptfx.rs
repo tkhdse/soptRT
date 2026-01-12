@@ -5,8 +5,10 @@ use melior::{
     Context,
     ir::{
         Operation, 
+        Value,
         Location, 
         Region, 
+        Block,
         operation::{OperationBuilder}
     }
 };
@@ -14,10 +16,10 @@ use melior::{
 // define opaque operators belonging to soptfx
 
 const DIALECT: &str = "soptfx";
-type OpMap<'a> = &'a HashMap<&'a str, Operation<'a>>;
+type OpMap<'a> = &'a HashMap<&'a str, Value<'a,'a>>;
 
 
-pub fn build_soptfx_op(ctx: &Context, node: &FXNode, value_map: &HashMap<&str, Operation>) -> Result<i32, String> {
+pub fn build_soptfx_op(ctx: &Context, node: &FXNode, value_map: &HashMap<&str, Value>) -> Result<i32, String> {
     // value_map  ->  [node.name, resultingOperation] (node.name gives us a unique identifier that we can reference given args)
     let op_id = &node.name;
 
@@ -28,9 +30,11 @@ pub fn build_soptfx_op(ctx: &Context, node: &FXNode, value_map: &HashMap<&str, O
             let target = &node.target;
             let target_parts = target.split('.').collect::<Vec<&str>>();
             let node_type = format!("{}.{}_{}", DIALECT, target_parts[0], target_parts[1]);
-            handle_callfunction_op(ctx, value_map, node_type, op_id)
+            handle_callfunction_op(ctx, value_map, node, node_type)
         },
-        OpType::Output => handle_output_op(&value_map),
+        OpType::Output => {
+            handle_output_op(ctx, &value_map, node)
+        },
         _ => Err("GetAttr not yet supported.".to_string()) //OpType::GetAttr
     }
 }
@@ -48,26 +52,35 @@ fn handle_placeholder_op(value_map: OpMap, op_id: &String, index: usize) -> Resu
     Ok(0)
 }
 
-fn handle_callfunction_op(ctx: &Context, value_map: OpMap, node_type: String, op_id: &String) -> Result<i32, String> {
+fn handle_callfunction_op(ctx: &Context, value_map: OpMap, node: &FXNode, node_type: String) -> Result<i32, String> {
     // get operands (from map)
+    // let arg1 = value_map.get();
+
     // construct operation -> build_op()
-    let result = build_op(ctx, node_type);
+    // let result = build_op(ctx, node_type);
     // save return in map
     Ok(0)
 }
 
-fn handle_output_op(value_map: OpMap) -> Result<i32, String>{
+fn handle_output_op(ctx: &Context, value_map: OpMap, node: &FXNode) -> Result<i32, String>{
     // get operands (from map)
+    let operand_values: Vec<Value> = node.args.iter()
+        .map(|arg: &String| {
+            value_map.get(arg.as_str())
+                .cloned()
+                .ok_or_else(|| format!("Node '{}' not found in value map", arg)) // returns Err
+        })
+        .collect::<Result<Vec<Value>, String>>()
+        .map_err(|e| e)?;
+
     // construct operation -> build_op()
-    Ok(0)
-}
-
-
-fn build_op(ctx: &Context, op_name: String) -> Result<i32, String> {
     let location = Location::unknown(ctx);
-    let op = OperationBuilder::new(&op_name, location)
-        // .add_operands(&[lhs, rhs])
+    let op = OperationBuilder::new("soptfx.return", location)
+        .add_operands(&operand_values)
         // .add_results(&[tensor_type])
         .build();
+
+    // append to block
+
     Ok(0)
 }

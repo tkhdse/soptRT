@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use melior::{
     Context, 
     dialect::{DialectRegistry, arith, func}, 
-    ir::{*, attribute::TypeAttribute, Operation}, 
+    ir::{*, attribute::TypeAttribute, Operation, Value}, 
     utility::register_all_dialects
 };
 
@@ -115,7 +115,7 @@ fn init_module(context: &Context) -> Module {
     module
 }
 
-fn convert_to_soptfx(ctx: &Context, graph: &FXGraph, value_map: &HashMap<&str, Operation>) -> Result<i32, String> {
+fn convert_to_soptfx(ctx: &Context, graph: &FXGraph, value_map: &HashMap<&str, Value>) -> Result<i32, String> {
     
     for node in &graph.nodes {
         let op_res = build_soptfx_op(&ctx, &node, &value_map)
