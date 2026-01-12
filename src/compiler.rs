@@ -49,7 +49,7 @@ impl SOPTCompiler {
     
         // run conversion pass (to IR)
         let mut value_map = HashMap::new();
-        let conv_result = convert_to_soptfx(&graph, &value_map)
+        let conv_result = convert_to_soptfx(&self.ctx, &graph, &value_map)
             .map_err(|e| e);
     
         // run optimization passes
@@ -115,10 +115,10 @@ fn init_module(context: &Context) -> Module {
     module
 }
 
-fn convert_to_soptfx(graph: &FXGraph, value_map: &HashMap<&str, Operation>) -> Result<i32, String> {
+fn convert_to_soptfx(ctx: &Context, graph: &FXGraph, value_map: &HashMap<&str, Operation>) -> Result<i32, String> {
     
     for node in &graph.nodes {
-        let op_res = build_soptfx_op(&node, &value_map)
+        let op_res = build_soptfx_op(&ctx, &node, &value_map)
             .map_err(|e| format!("Could not convert operation '{}': {}", node.name, e))?;
     }
 
