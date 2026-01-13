@@ -16,7 +16,12 @@ mod sopt_rt {
         pub name: String,
         pub op_name: String,
         pub target: String,
-        pub args: Vec<String>
+        pub args: Vec<String>,
+
+        // optional fields
+        pub shape: Option<Vec<i64>>,
+        pub dtype: Option<String>,
+        pub index: Option<usize>,
     }
 
 
