@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use melior::{
     Context, 
     dialect::{DialectRegistry, arith, func}, 
-    ir::{*, attribute::TypeAttribute, Operation, Value}, 
+    ir::{*, attribute::TypeAttribute, Operation, Value, r#type::IntegerType}, 
     utility::register_all_dialects
 };
 
@@ -16,7 +16,11 @@ pub struct FXNode {
     pub index: usize,
     pub op_name: OpType,
     pub target: String,
-    pub args: Vec<String>
+    pub args: Vec<String>,
+
+    // metadata
+    pub shape: Option<Vec<i64>>,
+    pub dtype: Option<String>
 }
 
 
@@ -72,7 +76,9 @@ impl SOPTCompiler {
                     index: i,
                     op_name: parse_op_type(&pynode.op_name)?,
                     target: pynode.target,
-                    args: pynode.args
+                    args: pynode.args,
+                    shape: pynode.shape,
+                    dtype: pynode.dtype
                 })
             })
             .collect::<Result<Vec<FXNode>, String>>()?;

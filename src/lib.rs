@@ -2,6 +2,7 @@ use pyo3::prelude::*;
 
 mod compiler;
 mod dialects;
+mod utils;
 
 /// A Python module implemented in Rust.
 #[pymodule]

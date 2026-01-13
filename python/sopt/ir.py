@@ -29,7 +29,7 @@ def serialize_fx_to_json(graph: torch.fx.GraphModule):
                 node.name,
                 node.op,
                 str(node.target),
-                [str(arg) for arg in node.args]
+                [str(arg) for arg in node.args],
                 shape,
                 dtype,
                 index
@@ -39,7 +39,7 @@ def serialize_fx_to_json(graph: torch.fx.GraphModule):
                 node.name,
                 node.op,
                 str(node.target),
-                [str(arg) for arg in node.args]
+                [str(arg) for arg in node.args],
                 None,
                 None,
                 index

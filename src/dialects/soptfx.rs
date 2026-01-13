@@ -1,14 +1,17 @@
 use crate::compiler::{FXNode, OpType};
 use std::collections::HashMap;
+use crate::utils::map_dtype_to_mlir;
 
 use melior::{
     Context,
     ir::{
         Operation, 
         Value,
+        Attribute,
         Location, 
         Region, 
         Block,
+        r#type::RankedTensorType,
         operation::{OperationBuilder}
     }
 };
@@ -65,10 +68,31 @@ fn handle_callfunction_op(ctx: &Context, value_map: OpMap, node: &FXNode, node_t
 
     // construct operation -> build_op()
     let location = Location::unknown(ctx);
-    let op = OperationBuilder::new(&node_type, location)
-        .add_operands(&operand_values)
-        // .add_results(&[tensor_type])
-        .build();
+
+    if let Some(dtype_str) = &node.dtype {
+        if let Some(shape) = &node.shape {
+
+            // let shape = node.shape.as_ref()
+            // .ok_or_else(|| format!("Node '{}' does not have shape metadata", node.name))?;
+
+            // Convert i64 to u64
+            let shape_u64: Vec<u64> = shape.iter()
+                .map(|&dim| dim as u64)
+                .collect();
+
+
+            let dtype = map_dtype_to_mlir(ctx, dtype_str);
+            let tensor_type = RankedTensorType::new(&shape_u64, dtype, None).into();
+    
+            let op = OperationBuilder::new(&node_type, location)
+                .add_operands(&operand_values)
+                .add_results(&[tensor_type])
+                .build();
+        }
+    } else {
+        return Err(format!("Node {} does not have associated dtype", node.name))
+    }
+
 
     // save return in map
     Ok(0)
