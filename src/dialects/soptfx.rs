@@ -19,8 +19,15 @@ use melior::{
 // define opaque operators belonging to soptfx
 
 const DIALECT: &str = "soptfx";
+static region: Region = Region::new();
+static block: Block = region.append_block((Block::new(&[])));
+
 type OpMap<'a> = &'a HashMap<&'a str, Value<'a,'a>>;
 
+
+pub fn init_block(ctx: &Context) {
+
+}
 
 pub fn build_soptfx_op(ctx: &Context, node: &FXNode, value_map: &HashMap<&str, Value>) -> Result<i32, String> {
     // value_map  ->  [node.name, resultingOperation] (node.name gives us a unique identifier that we can reference given args)
@@ -45,8 +52,6 @@ pub fn build_soptfx_op(ctx: &Context, node: &FXNode, value_map: &HashMap<&str, V
 
 fn handle_placeholder_op(value_map: OpMap, op_id: &String, index: usize) -> Result<i32, String> {
     // get operands (from region/block)
-    // let region = Region::new();
-    // let block = region.append_block((Block::new(&[])));
 
     // let arg_value = block.argument(index).expect("Missing block argument");
 
@@ -88,13 +93,16 @@ fn handle_callfunction_op(ctx: &Context, value_map: OpMap, node: &FXNode, node_t
                 .add_operands(&operand_values)
                 .add_results(&[tensor_type])
                 .build();
+                // .map_err(|e| e.to_string())?;
+
+            // save return in map
+            let res =   op.result(0).expect("Op produced no result");
+            value_map.insert(&node_type.clone(), res);
         }
     } else {
         return Err(format!("Node {} does not have associated dtype", node.name))
     }
 
-
-    // save return in map
     Ok(0)
 }
 
