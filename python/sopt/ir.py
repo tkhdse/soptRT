@@ -24,7 +24,7 @@ def serialize_fx_to_json(graph: torch.fx.GraphModule):
         if node.op != "output":
             shape = list(val.shape)
             dtype = str(val.dtype)
-
+            # print(node.name, node.target)
             nodes_data.append(Node(
                 node.name,
                 node.op,

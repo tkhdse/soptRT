@@ -6,6 +6,7 @@ use melior::{
     Context,
     ir::{
         Operation, 
+        {operation::OperationLike},
         Value,
         Attribute,
         Location, 
@@ -19,38 +20,39 @@ use melior::{
 // define opaque operators belonging to soptfx
 
 const DIALECT: &str = "soptfx";
-static region: Region = Region::new();
-static block: Block = region.append_block((Block::new(&[])));
 
-type OpMap<'a> = &'a HashMap<&'a str, Value<'a,'a>>;
+type OpMap<'a> = &'a mut HashMap<String, Value<'a,'a>>;
 
 
 pub fn init_block(ctx: &Context) {
+    // static region: Region = Region::new();
+    // static block: Block = region.append_block((Block::new(&[])));
 
 }
 
-pub fn build_soptfx_op(ctx: &Context, node: &FXNode, value_map: &HashMap<&str, Value>) -> Result<i32, String> {
+pub fn build_soptfx_op<'c>(ctx: &'c Context, node: &FXNode, value_map: &mut HashMap<String, Value<'c, 'c>>) -> Result<i32, String> {
     // value_map  ->  [node.name, resultingOperation] (node.name gives us a unique identifier that we can reference given args)
     let op_id = &node.name;
 
     match &node.op_name {
-        OpType::Placeholder => handle_placeholder_op(&value_map, op_id, node.index),
+        OpType::Placeholder => handle_placeholder_op(value_map, op_id, node.index),
         OpType::CallFunction => {
             // println!("{:?}", node);
             let target = &node.target;
             let target_parts = target.split('.').collect::<Vec<&str>>();
             let node_type = format!("{}.{}_{}", DIALECT, target_parts[0], target_parts[1]);
+            println!("name: {}, target: {}, node_type: {}", &node.name, &node.target, &node_type);
             handle_callfunction_op(ctx, value_map, node, node_type)
         },
         OpType::Output => {
-            handle_output_op(ctx, &value_map, node)
+            handle_output_op(ctx, value_map, node)
         },
         _ => Err("GetAttr not yet supported.".to_string()) //OpType::GetAttr
     }
 }
 
 
-fn handle_placeholder_op(value_map: OpMap, op_id: &String, index: usize) -> Result<i32, String> {
+fn handle_placeholder_op<'c>(value_map: &mut HashMap<String, Value<'c, 'c>>, op_id: &String, index: usize) -> Result<i32, String> {
     // get operands (from region/block)
 
     // let arg_value = block.argument(index).expect("Missing block argument");
@@ -60,11 +62,11 @@ fn handle_placeholder_op(value_map: OpMap, op_id: &String, index: usize) -> Resu
     Ok(0)
 }
 
-fn handle_callfunction_op(ctx: &Context, value_map: OpMap, node: &FXNode, node_type: String) -> Result<i32, String> {
+fn handle_callfunction_op<'c>(ctx: &'c Context, value_map: &mut HashMap<String, Value<'c, 'c>>, node: &FXNode, node_type: String) -> Result<i32, String> {
     // get operands (from map)
     let operand_values: Vec<Value> = node.args.iter()
         .map(|arg: &String| {
-            value_map.get(arg.as_str())
+            value_map.get(arg)
                 .cloned()
                 .ok_or_else(|| format!("Node '{}' not found in value map", arg)) // returns Err
         })
@@ -96,8 +98,9 @@ fn handle_callfunction_op(ctx: &Context, value_map: OpMap, node: &FXNode, node_t
                 // .map_err(|e| e.to_string())?;
 
             // save return in map
-            let res =   op.result(0).expect("Op produced no result");
-            value_map.insert(&node_type.clone(), res);
+            let res = op.expect("Op produced no result");
+            let value = res.result(0).expect("Op produced no result").into();
+            value_map.insert(node.name.clone(), value);
         }
     } else {
         return Err(format!("Node {} does not have associated dtype", node.name))
@@ -106,7 +109,7 @@ fn handle_callfunction_op(ctx: &Context, value_map: OpMap, node: &FXNode, node_t
     Ok(0)
 }
 
-fn handle_output_op(ctx: &Context, value_map: OpMap, node: &FXNode) -> Result<i32, String>{
+fn handle_output_op<'c>(ctx: &Context, value_map: &mut HashMap<String, Value<'c, 'c>>, node: &FXNode) -> Result<i32, String>{
     // get operands (from map)
     let operand_values: Vec<Value> = node.args.iter()
         .map(|arg: &String| {
